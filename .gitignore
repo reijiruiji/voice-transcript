@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+venv/
+logs/
+temp_segment.wav
+my_transcriber/my_transcriber/venv/
+my_transcriber/my_transcriber/logs/

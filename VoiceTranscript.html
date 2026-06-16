@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>リアルタイム文字起こし</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f2f5; }
+        #log { background: white; padding: 20px; height: 400px; overflow-y: scroll; border-radius: 10px; border: 1px solid #ddd; }
+        .text-line { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h2>リアルタイム・全文章ログ</h2>
+    <button id="btn">録音開始</button>
+    <div id="log"></div>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const log = document.getElementById('log');
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            alert("このブラウザは対応していません。Chromeを使ってね！");
+        } else {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'ja-JP'; // 中国語なら 'zh-CN' に変更可能！
+            recognition.interimResults = true; // 途中の経過も表示
+            recognition.continuous = true; // ずっと聞き続ける
+
+            recognition.onresult = (event) => {
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    let transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        const div = document.createElement('div');
+                        div.className = 'text-line';
+                        div.innerText = `[${new Date().toLocaleTimeString()}] ${transcript}`;
+                        log.appendChild(div);
+                        log.scrollTop = log.scrollHeight;
+                    }
+                }
+            };
+
+            btn.onclick = () => {
+                recognition.start();
+                btn.innerText = "録音中...";
+            };
+        }
+    </script>
+</body>
+</html>
